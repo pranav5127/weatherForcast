@@ -2,7 +2,7 @@ import {Pressable, StyleSheet, Text, View} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {JSX} from "react";
 
-function SearchBar(): JSX.Element {
+function TopBar(): JSX.Element {
     return (
         <View style={styles.container}>
             <Pressable style={styles.locationButton}>
@@ -17,7 +17,7 @@ function SearchBar(): JSX.Element {
     )
 }
 
-export default SearchBar;
+export default TopBar;
 
 const styles = StyleSheet.create({
     container: {

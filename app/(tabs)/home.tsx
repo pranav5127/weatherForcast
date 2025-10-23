@@ -1,6 +1,6 @@
-import { StyleSheet, ImageBackground, View, Text } from "react-native"
-import { JSX } from "react"
-import { ThemedView } from "@/components/themed-view"
+import {StyleSheet, ImageBackground, View, Text, ScrollView } from "react-native"
+import React, {JSX} from "react"
+import {ThemedView} from "@/components/themed-view"
 import {
     cloudy,
     fog,
@@ -13,18 +13,41 @@ import {
     sunny,
     thunder,
 } from "@/assets/weather"
-import SearchBar from "@/components/search-bar"
+import TopBar from "@/components/top-bar"
+import InfoCard from "@/components/info-card";
+import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter";
+import {useFonts} from "expo-font";
 
-export default function Weather(): JSX.Element {
+export default function Weather(): JSX.Element | null {
+    const [fontsLoaded] = useFonts({
+        Inter_100Thin,
+       Inter_200ExtraLight
+    })
+
+    if (!fontsLoaded) {
+        return null
+    }
     return (
         <ThemedView style={styles.container}>
-            <ImageBackground source={thunder} style={styles.background} resizeMode="cover">
+            <ImageBackground source={sunny} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
-                    <SearchBar />
+                    <TopBar/>
 
                     <View style={styles.tempContainer}>
                         <Text style={styles.temperatureText}>23{"\u00B0"}C</Text>
                     </View>
+
+                    <ScrollView
+                        horizontal={true}
+                        style={styles.infoCards}
+                        contentContainerStyle={{paddingHorizontal: 20}}
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        <InfoCard/>
+                        <InfoCard/>
+                        <InfoCard/>
+                        <InfoCard/>
+                    </ScrollView>
                 </View>
             </ImageBackground>
         </ThemedView>
@@ -54,4 +77,11 @@ const styles = StyleSheet.create({
         fontSize: 80,
         fontFamily: "Inter_200ExtraLight",
     },
+    infoCards: {
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        paddingVertical: 20,
+
+    }
 })
