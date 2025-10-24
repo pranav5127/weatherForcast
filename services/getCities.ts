@@ -1,13 +1,10 @@
 import axios, {AxiosResponse} from "axios";
 import {API_KEY} from "@/constants/api";
-
-interface Cities {
-    [id: string]: string
-}
+import {Cities} from "@/services/models/cities";
 
 async function getCities(): Promise<Cities> {
     const options = {
-        method: "GET",
+        method: 'GET',
         url: 'https://weather.indianapi.in/india/cities',
         headers: {'X-Api-Key': API_KEY}
     }
