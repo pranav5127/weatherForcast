@@ -12,6 +12,7 @@ import {
     sun,
     sunny,
     thunder,
+    northern_lights
 } from "@/assets/weather"
 import TopBar from "@/components/top-bar"
 import InfoCard from "@/components/info-card";
@@ -29,7 +30,7 @@ export default function Weather(): JSX.Element | null {
     }
     return (
         <ThemedView style={styles.container}>
-            <ImageBackground source={sunny} style={styles.background} resizeMode="cover">
+            <ImageBackground source={northern_lights} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
                     <TopBar/>
 

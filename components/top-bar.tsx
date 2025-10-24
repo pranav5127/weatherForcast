@@ -1,23 +1,25 @@
-import {Pressable, StyleSheet, Text, View} from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import {JSX} from "react";
+import {Pressable, StyleSheet, Text, View} from "react-native"
+import MaterialIcons from "@expo/vector-icons/MaterialIcons"
+import {JSX} from "react"
+import {useRouter} from "expo-router";
 
 function TopBar(): JSX.Element {
+    const router  = useRouter()
     return (
         <View style={styles.container}>
-            <Pressable style={styles.locationButton}>
+            <Pressable style={styles.locationButton} >
                 <MaterialIcons name="location-on" size={24} color="#fff" />
                 <Text style={styles.locationText}>Ranchi</Text>
             </Pressable>
 
-            <Pressable style={styles.menuButton}>
+            <Pressable style={styles.menuButton} onPress={() => router.push("/screens/search")}>
                 <MaterialIcons name="menu" size={28} color="#fff" />
             </Pressable>
         </View>
     )
 }
 
-export default TopBar;
+export default TopBar
 
 const styles = StyleSheet.create({
     container: {
