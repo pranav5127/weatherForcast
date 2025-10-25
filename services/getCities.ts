@@ -1,23 +1,28 @@
-import axios, {AxiosResponse} from "axios";
-import {API_KEY} from "@/constants/api";
-import {Cities} from "@/services/models/cities";
+import axios, { AxiosResponse } from "axios"
+import { API_KEY } from "@/constants/api"
+import { BASE_URL } from "@/constants/urls"
+import { LocationSearchResponse } from "@/services/models/cities"
 
-async function getCities(): Promise<Cities> {
+export async function getCities(query: string): Promise<LocationSearchResponse> {
     const options = {
-        method: 'GET',
-        url: 'https://weather.indianapi.in/india/cities',
-        headers: {'X-Api-Key': API_KEY}
+        method: "GET",
+        url: `${BASE_URL}/search.json`,
+        params: {
+            key: API_KEY,
+            q: query,
+        },
     }
 
     try {
-        const response: AxiosResponse<Cities>  = await axios.request<Cities>(options)
-        console.log(response)
+        const response: AxiosResponse<LocationSearchResponse> =
+            await axios.request<LocationSearchResponse>(options)
+
+        console.log("City search API success:\n", JSON.stringify(response.data, null, 2))
         return response.data
-    } catch (err) {
-        console.log(err)
-        throw new Error(`An error occurred ${err}`)
+    } catch (error) {
+        console.error("Error fetching cities:", error)
+        throw error
     }
 }
 
-
-getCities()
+getCities("Ranchi").then((cities) => console.log(cities))

@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios"
 import { API_KEY } from "@/constants/api"
-import {WeatherApiResponse} from "@/services/models/weather-data"
-import {BASE_URL} from "@/constants/urls"
-
+import { BASE_URL } from "@/constants/urls"
+import { WeatherApiResponse } from "@/services/models/weather-data"
 
 export async function getWeatherReport(city: string): Promise<WeatherApiResponse> {
     if (!API_KEY) {
@@ -11,21 +10,19 @@ export async function getWeatherReport(city: string): Promise<WeatherApiResponse
 
     const options: AxiosRequestConfig = {
         method: "GET",
-        url: BASE_URL,
+        url: `${BASE_URL}/forecast.json`,
         params: {
             key: API_KEY,
             q: city,
-            aqi: "no",
+            days: 7,
+            aqi: "yes",
+            alerts: "no",
         },
     }
 
     try {
         const response = await axios.request<WeatherApiResponse>(options)
-        console.log("Weather API call success:", {
-            city: response.data.location.name,
-            temperature: response.data.current.temp_c,
-            condition: response.data.current.condition.text,
-        })
+        console.log(`Weather API call success: ${JSON.stringify(response.data)}`)
         return response.data
     } catch (error) {
         console.error("Error fetching weather data:", error)
