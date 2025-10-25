@@ -18,7 +18,15 @@ export default function TabLayout() {
             <Stack.Screen
                 name="search"
                 options={{
-                    title: 'search',
+                    title: 'Search',
+                    headerShown: true,
+                    animation: "slide_from_right"
+                }}
+            />
+            <Stack.Screen
+                name="settings"
+                options={{
+                    title: 'Settings',
                     headerShown: true,
                     animation: "slide_from_right"
                 }}

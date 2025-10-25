@@ -1,8 +1,25 @@
-import {View, StyleSheet, Text} from "react-native";
-import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter";
-import {useFonts} from "expo-font";
+import {View, StyleSheet, Text} from "react-native"
+import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
+import {useFonts} from "expo-font"
+import {JSX} from "react"
 
-function InfoCard() {
+
+interface Info {
+    title: string
+    value: number
+    unit: string
+    icon: JSX.Element
+}
+
+function InfoCard(
+    {
+        title,
+        value,
+        unit,
+        icon
+    }: Info
+): JSX.Element | null {
+
     const [fontsLoaded] = useFonts({
         Inter_100Thin,
         Inter_200ExtraLight,
@@ -13,10 +30,10 @@ function InfoCard() {
     }
     return (
         <View style={styles.container}>
-            <Text style={styles.titleText}>Wind Speed</Text>
+            <Text style={styles.titleText}>{title}</Text>
+            {icon}
             <View style={styles.textContainer}>
-            <Text style={styles.text}>24</Text>
-            <Text style={styles.titleText}>km/h</Text>
+                <Text style={styles.text}>{value}{unit}</Text>
             </View>
         </View>
     )
@@ -27,9 +44,9 @@ export default InfoCard
 
 const styles = StyleSheet.create({
     container: {
-        height: 100,
-        width: 100,
-        backgroundColor: "#140841",
+        height: 150,
+        width: 150,
+        backgroundColor: "rgb(13,4,44)",
         padding: 8,
         marginHorizontal: 4,
         marginBottom: 48,
@@ -40,15 +57,15 @@ const styles = StyleSheet.create({
     titleText: {
         color: "#fff",
         fontFamily: "Inter_200ExtraLight",
-        fontSize: 12,
+        fontSize: 16,
     },
     text: {
         color: "#fff",
-        fontSize: 30,
+        fontSize: 25,
     },
     textContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
-    }
+    },
 })

@@ -1,19 +1,21 @@
-import { JSX, useEffect, useState } from "react"
+import {JSX, useEffect, useState} from "react"
 import {View, StyleSheet, FlatList, TouchableOpacity} from "react-native"
-import { Searchbar, Text, ActivityIndicator, Card } from "react-native-paper"
-import { useTheme } from "@react-navigation/native"
+import {Searchbar, Text, ActivityIndicator, Card} from "react-native-paper"
+import {useTheme} from "@react-navigation/native"
 import useDebounce from "@/hooks/useDebounce"
 import {LocationSearchResponse, LocationSearchResult} from "@/services/models/cities"
-import { getCities } from "@/services/getCities"
+import {getCities} from "@/services/getCities"
 import {useLocation} from "@/hooks/useLocation";
+import {useRouter} from "expo-router";
 
 function Search(): JSX.Element {
-    const { colors, dark } = useTheme()
+    const {colors, dark} = useTheme()
     const [searchTerm, setSearchTerm] = useState<string>("")
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
     const [cities, setCities] = useState<LocationSearchResponse | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const {selectedLocation, setSelectedLocation} = useLocation()
+    const router = useRouter()
 
     useEffect(() => {
         if (debouncedSearchTerm.trim() === "") {
@@ -40,23 +42,24 @@ function Search(): JSX.Element {
         setSelectedLocation(city)
         setSearchTerm("")
         setCities(null)
+        router.push("/screens/home")
     }
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.container, {backgroundColor: colors.background}]}>
             <Searchbar
                 placeholder="Search cities..."
                 onChangeText={setSearchTerm}
                 value={searchTerm}
-                style={[styles.searchbar, { backgroundColor: colors.card, color: colors.text }]}
-                inputStyle={{ color: colors.text }}
+                style={[styles.searchbar, {backgroundColor: colors.card, color: colors.text}]}
+                inputStyle={{color: colors.text}}
                 placeholderTextColor={dark ? "#aaa" : "#666"}
             />
 
             {loading && (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator animating size="large" color={colors.primary} />
-                    <Text style={[styles.loadingText, { color: colors.text }]}>Loading...</Text>
+                    <ActivityIndicator animating size="large" color={colors.primary}/>
+                    <Text style={[styles.loadingText, {color: colors.text}]}>Loading...</Text>
                 </View>
             )}
 
@@ -64,8 +67,8 @@ function Search(): JSX.Element {
                 <FlatList
                     data={cities}
                     keyExtractor={(item) => item.id?.toString() || item.name}
-                    contentContainerStyle={{ paddingVertical: 8 }}
-                    renderItem={({ item }) => (
+                    contentContainerStyle={{paddingVertical: 8}}
+                    renderItem={({item}) => (
                         <TouchableOpacity onPress={() => handleSelectCity(item)}>
                             <Card
                                 style={[
@@ -79,8 +82,8 @@ function Search(): JSX.Element {
                                 ]}
                             >
                                 <Card.Content>
-                                    <Text style={{ color: colors.text, fontWeight: "bold" }}>{item.name}</Text>
-                                    <Text style={{ color: dark ? "#ccc" : "#555" }}>{item.region}</Text>
+                                    <Text style={{color: colors.text, fontWeight: "bold"}}>{item.name}</Text>
+                                    <Text style={{color: dark ? "#ccc" : "#555"}}>{item.region}</Text>
                                 </Card.Content>
                             </Card>
                         </TouchableOpacity>

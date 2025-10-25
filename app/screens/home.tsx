@@ -1,62 +1,148 @@
 import {StyleSheet, ImageBackground, View, Text, ScrollView} from "react-native"
-import React, {JSX} from "react"
+import {Image} from "expo-image"
+import React, {JSX, useEffect, useState} from "react"
 import {ThemedView} from "@/components/themed-view"
-import {
-    cloudy,
-    fog,
-    heat,
-    overcast,
-    rainy,
-    snow,
-    stars,
-    sun,
-    sunny,
-    thunder,
-    northern_lights
-} from "@/assets/weather"
 import TopBar from "@/components/top-bar"
 import InfoCard from "@/components/info-card"
 import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
 import {useFonts} from "expo-font"
-import {Router, useRouter} from "expo-router"
-import {useLocation} from "@/hooks/useLocation";
+import {useRouter, Router} from "expo-router"
+import {useLocation} from "@/hooks/useLocation"
+import {WeatherApiResponse} from "@/services/models/weather-data"
+import {getWeatherReport} from "@/services/getWeatherReport"
+import {ActivityIndicator} from "react-native-paper"
+import {useTheme} from "@react-navigation/native"
+import Ionicons from "@expo/vector-icons/Ionicons"
+import Feather from '@expo/vector-icons/Feather'
+import {AntDesign} from "@expo/vector-icons"
+import {weatherBackgroundMap} from "@/constants/weatherBackgroundMap";
+import {stars, sun, sunny} from "@/assets/weather";
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
         Inter_100Thin,
-        Inter_200ExtraLight
+        Inter_200ExtraLight,
     })
     const router: Router = useRouter()
+    const {colors} = useTheme()
     const {selectedLocation} = useLocation()
+    const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
 
-    if (!fontsLoaded) {
-        return null
+    useEffect(() => {
+        if (!selectedLocation) {
+            setWeatherData(null)
+            return
+        }
+
+        const fetchWeatherData = async () => {
+            try {
+                setLoading(true)
+                const data = await getWeatherReport(selectedLocation.name)
+                setWeatherData(data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchWeatherData().then(() => {
+        })
+    }, [selectedLocation])
+
+    if (!fontsLoaded) return null
+
+    const getBackgroundImage = () => {
+        if (!weatherData) return sunny
+
+        const code = weatherData.current.condition.code
+        const isDay = weatherData.current.is_day === 1
+
+        const mappedImage = weatherBackgroundMap[code]
+
+        if (mappedImage) {
+            if (!isDay && (code === 1000 || code === 1003)) return stars
+            return mappedImage
+        }
+
+        if (!isDay) return stars
+        return sun
     }
+
+    const backgroundImage = getBackgroundImage()
     return (
         <ThemedView style={styles.container}>
-            <ImageBackground source={stars} style={styles.background} resizeMode="cover">
+            <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
                     <TopBar
-                        onMenuPress={() => {}} // TODO
+                        onMenuPress={() => router.push("/screens/settings")}
                         onLocationPress={() => router.push("/screens/search")}
                         location={selectedLocation?.name}
                     />
 
-                    <View style={styles.tempContainer}>
-                        <Text style={styles.temperatureText}>23{"\u00B0"}C</Text>
-                    </View>
+                    {loading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator animating size="large" color={colors.primary}/>
+                            <Text style={[styles.loadingText, {color: colors.text}]}>Loading...</Text>
+                        </View>
+                    ) : weatherData ? (
+                        <>
+                            <View style={styles.tempContainer}>
+                                <Text style={styles.temperatureText}>{`${weatherData.current.temp_c} °C`}</Text>
+                                <Text style={styles.text}>{`Feels like ${weatherData.current.feelslike_c} °C`}</Text>
+                                <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
-                    <ScrollView
-                        horizontal={true}
-                        style={styles.infoCards}
-                        contentContainerStyle={{paddingHorizontal: 20}}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        <InfoCard/>
-                        <InfoCard/>
-                        <InfoCard/>
-                        <InfoCard/>
-                    </ScrollView>
+                                <Image
+                                    source={weatherData.current.condition.icon}
+                                    style={{
+                                        width: 80,
+                                        height: 100
+                                    }}
+                                />
+                            </View>
+
+                            <ScrollView
+                                horizontal
+                                style={styles.infoCards}
+                                contentContainerStyle={{paddingHorizontal: 20}}
+                                showsHorizontalScrollIndicator={false}
+                            >
+                                <InfoCard
+                                    title={"Humidity"}
+                                    value={weatherData.current.humidity}
+                                    unit={"%"}
+                                    icon={<Ionicons name="water" size={64} color="#45DDFAFF"/>}
+                                />
+                                <InfoCard
+                                    title={"Wind Speed"}
+                                    value={weatherData.current.wind_kph}
+                                    unit={" km/h"}
+                                    icon={<Feather name="wind" size={64} color="#ffffff"/>}
+                                />
+                                <InfoCard
+                                    title={"UV Index"}
+                                    value={weatherData.current.uv}
+                                    unit={""}
+                                    icon={<AntDesign name="sun" size={64} color="#f7d511"/>}
+                                />
+                                <InfoCard
+                                    title={"Pressure"}
+                                    value={weatherData.current.pressure_mb}
+                                    unit={" mb"}
+                                    icon={<Ionicons name="speedometer-sharp" size={64} color="#ffffff"/>}
+                                />
+
+
+                            </ScrollView>
+                        </>
+                    ) : (
+                        <View style={styles.loadingContainer}>
+                            <Text style={[styles.loadingText, {color: colors.text}]}>
+                                Select a location to see weather.
+                            </Text>
+                        </View>
+                    )}
                 </View>
             </ImageBackground>
         </ThemedView>
@@ -76,7 +162,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0,0,0,0.2)",
+        backgroundColor: "rgba(0,0,0,0.3)",
     },
     tempContainer: {
         position: "absolute",
@@ -88,11 +174,25 @@ const styles = StyleSheet.create({
         fontSize: 80,
         fontFamily: "Inter_200ExtraLight",
     },
+    text: {
+        color: "#fff",
+        fontSize: 16,
+        paddingHorizontal: 8,
+        fontFamily: "Inter_200ExtraLight",
+    },
     infoCards: {
         position: "absolute",
         bottom: 0,
         width: "100%",
         paddingVertical: 20,
-
-    }
+    },
+    loadingContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    loadingText: {
+        marginTop: 8,
+        fontSize: 16,
+    },
 })

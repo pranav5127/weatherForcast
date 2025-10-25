@@ -12,7 +12,7 @@ function TopBar(
     {
         onMenuPress,
         onLocationPress,
-        location = "",
+        location = "Tap here to search"
     }: TopBarProps
 ): JSX.Element {
 
