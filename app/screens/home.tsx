@@ -1,5 +1,5 @@
 import {StyleSheet, ImageBackground, View, Text, ScrollView} from "react-native"
-import React, {JSX} from "react"
+import React, {JSX, useEffect, useState} from "react"
 import {ThemedView} from "@/components/themed-view"
 import {
     cloudy,
@@ -20,6 +20,8 @@ import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
 import {useFonts} from "expo-font"
 import {Router, useRouter} from "expo-router"
 import {useLocation} from "@/hooks/useLocation";
+import {WeatherApiResponse} from "@/services/models/weather-data";
+import {getWeatherReport} from "@/services/getWeatherReport";
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
@@ -28,6 +30,29 @@ function Weather(): JSX.Element | null {
     })
     const router: Router = useRouter()
     const {selectedLocation} = useLocation()
+    const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (!selectedLocation) {
+            setWeatherData(null)
+            return
+        }
+
+        const fetchWeatherData = async () => {
+            try {
+                setLoading(true)
+                const data = await getWeatherReport(selectedLocation.name)
+                setWeatherData(data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchWeatherData()
+    }, [selectedLocation])
 
     if (!fontsLoaded) {
         return null
@@ -37,13 +62,15 @@ function Weather(): JSX.Element | null {
             <ImageBackground source={stars} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
                     <TopBar
-                        onMenuPress={() => {}} // TODO
+                        onMenuPress={() => {
+                        }} // TODO
                         onLocationPress={() => router.push("/screens/search")}
                         location={selectedLocation?.name}
                     />
 
                     <View style={styles.tempContainer}>
-                        <Text style={styles.temperatureText}>23{"\u00B0"}C</Text>
+                        <Text style={styles.temperatureText}>{weatherData?.current.temp_c} °C</Text>
+                        <Text style={styles.text}>Feels like {weatherData?.current.feelslike_c} °C</Text>
                     </View>
 
                     <ScrollView
@@ -86,6 +113,12 @@ const styles = StyleSheet.create({
     temperatureText: {
         color: "#fff",
         fontSize: 80,
+        fontFamily: "Inter_200ExtraLight",
+    },
+    text: {
+        color: "#fff",
+        fontSize: 16,
+        paddingHorizontal: 8,
         fontFamily: "Inter_200ExtraLight",
     },
     infoCards: {

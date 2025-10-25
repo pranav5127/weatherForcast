@@ -22,7 +22,7 @@ export async function getWeatherReport(city: string): Promise<WeatherApiResponse
 
     try {
         const response = await axios.request<WeatherApiResponse>(options)
-        console.log(`Weather API call success: ${JSON.stringify(response.data)}`)
+        // console.log(`Weather API call success: ${JSON.stringify(response.data)}`)
         return response.data
     } catch (error) {
         console.error("Error fetching weather data:", error)
