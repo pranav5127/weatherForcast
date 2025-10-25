@@ -1,15 +1,13 @@
 import {Stack} from 'expo-router'
 import React from 'react'
-import {useColorScheme} from '@/hooks/use-color-scheme'
-import {ColorSchemeName} from "react-native"
 
 export default function TabLayout() {
-    const colorScheme: ColorSchemeName = useColorScheme();
 
     return (
         <Stack
             screenOptions={{
                 headerShown: false,
+                animation: "slide_from_left"
             }}>
             <Stack.Screen
                 name="home"
@@ -21,7 +19,8 @@ export default function TabLayout() {
                 name="search"
                 options={{
                     title: 'search',
-                    headerShown: true
+                    headerShown: true,
+                    animation: "slide_from_right"
                 }}
             />
         </Stack>

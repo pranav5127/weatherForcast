@@ -1,7 +1,6 @@
 import {Pressable, StyleSheet, Text, View} from "react-native"
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 import {JSX} from "react"
-import {useRouter} from "expo-router";
 
 interface TopBarProps {
     onMenuPress: () => void

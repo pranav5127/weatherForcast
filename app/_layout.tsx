@@ -1,8 +1,9 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {Stack} from 'expo-router';
+import {StatusBar} from 'expo-status-bar';
 import 'react-native-reanimated';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import {useColorScheme} from '@/hooks/use-color-scheme';
+import {LocationProvider} from "@/context/LocationContext";
 
 export const unstable_settings = {
     anchor: 'screens',
@@ -15,24 +16,29 @@ export default function RootLayout() {
 
     return (
         <ThemeProvider value={theme}>
-            <StatusBar style={isDark ? 'light' : 'dark'} />
-            <Stack>
-                <Stack.Screen
-                    name="screens"
-                    options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                    name="modal"
-                    options={{
-                        presentation: 'modal',
-                        title: 'Modal',
-                        headerStyle: {
-                            backgroundColor: theme.colors.card,
-                        },
-                        headerTintColor: theme.colors.text,
-                    }}
-                />
-            </Stack>
+            <LocationProvider>
+                <StatusBar style={isDark ? 'light' : 'dark'}/>
+                <Stack>
+                    <Stack.Screen
+                        name="screens"
+                        options={{
+                            headerShown: false,
+                        }}
+
+                    />
+                    <Stack.Screen
+                        name="modal"
+                        options={{
+                            presentation: 'modal',
+                            title: 'Modal',
+                            headerStyle: {
+                                backgroundColor: theme.colors.card,
+                            },
+                            headerTintColor: theme.colors.text,
+                        }}
+                    />
+                </Stack>
+            </LocationProvider>
         </ThemeProvider>
     );
 }

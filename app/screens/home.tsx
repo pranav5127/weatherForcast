@@ -19,6 +19,7 @@ import InfoCard from "@/components/info-card"
 import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
 import {useFonts} from "expo-font"
 import {Router, useRouter} from "expo-router"
+import {useLocation} from "@/hooks/useLocation";
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
@@ -26,17 +27,19 @@ function Weather(): JSX.Element | null {
         Inter_200ExtraLight
     })
     const router: Router = useRouter()
+    const {selectedLocation} = useLocation()
 
     if (!fontsLoaded) {
         return null
     }
     return (
         <ThemedView style={styles.container}>
-            <ImageBackground source={northern_lights} style={styles.background} resizeMode="cover">
+            <ImageBackground source={stars} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
                     <TopBar
                         onMenuPress={() => {}} // TODO
                         onLocationPress={() => router.push("/screens/search")}
+                        location={selectedLocation?.name}
                     />
 
                     <View style={styles.tempContainer}>
