@@ -3,17 +3,29 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 import {JSX} from "react"
 import {useRouter} from "expo-router";
 
-function TopBar(): JSX.Element {
-    const router  = useRouter()
+interface TopBarProps {
+    onMenuPress: () => void
+    onLocationPress: () => void
+    location?: string
+}
+
+function TopBar(
+    {
+        onMenuPress,
+        onLocationPress,
+        location = "",
+    }: TopBarProps
+): JSX.Element {
+
     return (
         <View style={styles.container}>
-            <Pressable style={styles.locationButton} >
-                <MaterialIcons name="location-on" size={24} color="#fff" />
-                <Text style={styles.locationText}>Ranchi</Text>
+            <Pressable style={styles.locationButton} onPress={onLocationPress}>
+                <MaterialIcons name="location-on" size={24} color="#fff"/>
+                <Text style={styles.locationText}>{location}</Text>
             </Pressable>
 
-            <Pressable style={styles.menuButton} onPress={() => router.push("/screens/search")}>
-                <MaterialIcons name="menu" size={28} color="#fff" />
+            <Pressable style={styles.menuButton} onPress={onMenuPress}>
+                <MaterialIcons name="menu" size={28} color="#fff"/>
             </Pressable>
         </View>
     )

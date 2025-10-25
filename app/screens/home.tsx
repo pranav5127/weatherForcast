@@ -1,4 +1,4 @@
-import {StyleSheet, ImageBackground, View, Text, ScrollView } from "react-native"
+import {StyleSheet, ImageBackground, View, Text, ScrollView} from "react-native"
 import React, {JSX} from "react"
 import {ThemedView} from "@/components/themed-view"
 import {
@@ -15,15 +15,17 @@ import {
     northern_lights
 } from "@/assets/weather"
 import TopBar from "@/components/top-bar"
-import InfoCard from "@/components/info-card";
-import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter";
-import {useFonts} from "expo-font";
+import InfoCard from "@/components/info-card"
+import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
+import {useFonts} from "expo-font"
+import {Router, useRouter} from "expo-router"
 
-export default function Weather(): JSX.Element | null {
+function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
         Inter_100Thin,
-       Inter_200ExtraLight
+        Inter_200ExtraLight
     })
+    const router: Router = useRouter()
 
     if (!fontsLoaded) {
         return null
@@ -32,7 +34,10 @@ export default function Weather(): JSX.Element | null {
         <ThemedView style={styles.container}>
             <ImageBackground source={northern_lights} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
-                    <TopBar/>
+                    <TopBar
+                        onMenuPress={() => {}} // TODO
+                        onLocationPress={() => router.push("/screens/search")}
+                    />
 
                     <View style={styles.tempContainer}>
                         <Text style={styles.temperatureText}>23{"\u00B0"}C</Text>
@@ -54,6 +59,8 @@ export default function Weather(): JSX.Element | null {
         </ThemedView>
     )
 }
+
+export default Weather
 
 const styles = StyleSheet.create({
     container: {

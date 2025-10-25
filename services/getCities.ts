@@ -25,4 +25,5 @@ export async function getCities(query: string): Promise<LocationSearchResponse> 
     }
 }
 
-getCities("Ranchi").then((cities) => console.log(cities))
+// getCities("Ranchi").then((cities) => console.log(cities))
+
