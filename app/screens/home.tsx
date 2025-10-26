@@ -94,7 +94,7 @@ function Weather(): JSX.Element | null {
                                 <Text style={styles.text}>{`Feels like ${weatherData.current.feelslike_c} °C`}</Text>
                                 <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
-                            <Forecast hourlyData={weatherData.forecast.forecastday[0].hour}/>
+                                <Forecast hourlyData={weatherData.forecast.forecastday[0].hour}/>
                                 <Image
                                     source={weatherData.current.condition.icon}
                                     style={{
@@ -102,6 +102,7 @@ function Weather(): JSX.Element | null {
                                         height: 100
                                     }}
                                 />
+
                             </View>
                             <ScrollView
                                 horizontal
@@ -167,17 +168,18 @@ const styles = StyleSheet.create({
     },
     tempContainer: {
         position: "absolute",
-        left: 20,
         top: 100,
     },
     temperatureText: {
         color: "#fff",
         fontSize: 80,
+        marginHorizontal: 20,
         fontFamily: "Inter_200ExtraLight",
     },
     text: {
         color: "#fff",
         fontSize: 16,
+        marginHorizontal: 20,
         paddingHorizontal: 8,
         fontFamily: "Inter_200ExtraLight",
     },

@@ -46,12 +46,11 @@ const styles = StyleSheet.create({
     container: {
         height: 150,
         width: 150,
-        backgroundColor: "rgb(13,4,44)",
+        backgroundColor: "rgba(13,4,44,0.3)",
         padding: 8,
         marginHorizontal: 4,
         marginBottom: 48,
         borderRadius: 10,
-        elevation: 8,
         alignItems: "center"
     },
     titleText: {
