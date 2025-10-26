@@ -17,6 +17,7 @@ import Feather from '@expo/vector-icons/Feather'
 import {AntDesign} from "@expo/vector-icons"
 import {weatherBackgroundMap} from "@/constants/weatherBackgroundMap";
 import {stars, sun, sunny} from "@/assets/weather";
+import Forecast from "@/components/forecast";
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
@@ -93,6 +94,7 @@ function Weather(): JSX.Element | null {
                                 <Text style={styles.text}>{`Feels like ${weatherData.current.feelslike_c} °C`}</Text>
                                 <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
+                            <Forecast hourlyData={weatherData.forecast.forecastday[0].hour}/>
                                 <Image
                                     source={weatherData.current.condition.icon}
                                     style={{
@@ -101,7 +103,6 @@ function Weather(): JSX.Element | null {
                                     }}
                                 />
                             </View>
-
                             <ScrollView
                                 horizontal
                                 style={styles.infoCards}
@@ -117,7 +118,7 @@ function Weather(): JSX.Element | null {
                                 <InfoCard
                                     title={"Wind Speed"}
                                     value={weatherData.current.wind_kph}
-                                    unit={" km/h"}
+                                    unit={" kph"}
                                     icon={<Feather name="wind" size={64} color="#ffffff"/>}
                                 />
                                 <InfoCard
