@@ -1,70 +1,67 @@
-import {View, StyleSheet, Text} from "react-native"
-import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
-import {useFonts} from "expo-font"
-import {JSX} from "react"
-
+import React, {JSX} from "react"
+import { View, StyleSheet, Text } from "react-native"
+import { useFonts, Inter_200ExtraLight, Inter_300Light } from "@expo-google-fonts/inter"
 
 interface Info {
     title: string
-    value: number
-    unit: string
-    icon: JSX.Element
+    value: number | string
+    unit?: string
+    icon: React.ReactElement
 }
 
-function InfoCard(
-    {
-        title,
-        value,
-        unit,
-        icon
-    }: Info
-): JSX.Element | null {
-
+export default function InfoCard({ title, value, unit = "", icon }: Info): JSX.Element | null {
     const [fontsLoaded] = useFonts({
-        Inter_100Thin,
         Inter_200ExtraLight,
-    });
+        Inter_300Light,
+    })
 
-    if (!fontsLoaded) {
-        return null
-    }
+    if (!fontsLoaded) return null
+
     return (
-        <View style={styles.container}>
-            <Text style={styles.titleText}>{title}</Text>
-            {icon}
-            <View style={styles.textContainer}>
-                <Text style={styles.text}>{value}{unit}</Text>
-            </View>
+        <View style={styles.card}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.iconContainer}>{icon}</View>
+            <Text style={styles.value}>
+                {value}
+                <Text style={styles.unit}>{unit}</Text>
+            </Text>
         </View>
     )
 }
 
-export default InfoCard
-
+const sharedCard = {
+    backgroundColor: "rgba(13,4,44,0.3)",
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+    marginHorizontal: 6,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    width: 140,
+    height: 160,
+}
 
 const styles = StyleSheet.create({
-    container: {
-        height: 150,
-        width: 150,
-        backgroundColor: "rgba(13,4,44,0.3)",
-        padding: 8,
-        marginHorizontal: 4,
-        marginBottom: 48,
-        borderRadius: 10,
-        alignItems: "center"
+    card: {
+        ...sharedCard,
     },
-    titleText: {
-        color: "#fff",
+    title: {
+        color: "#CCC",
         fontFamily: "Inter_200ExtraLight",
-        fontSize: 16,
+        fontSize: 14,
+        marginBottom: 8,
+        textAlign: "center" as const,
     },
-    text: {
-        color: "#fff",
-        fontSize: 25,
+    iconContainer: {
+        marginBottom: 8,
     },
-    textContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+    value: {
+        color: "#FFF",
+        fontFamily: "Inter_300Light",
+        fontSize: 22,
+    },
+    unit: {
+        color: "#AAA",
+        fontSize: 14,
     },
 })

@@ -18,6 +18,7 @@ import {AntDesign} from "@expo/vector-icons"
 import {weatherBackgroundMap} from "@/constants/weatherBackgroundMap";
 import {stars, sun, sunny} from "@/assets/weather";
 import Forecast from "@/components/forecast";
+import WeeklyForecast from "@/components/weeklyForecast";
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
@@ -95,6 +96,8 @@ function Weather(): JSX.Element | null {
                                 <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
                                 <Forecast hourlyData={weatherData.forecast.forecastday[0].hour}/>
+                                <WeeklyForecast weeklyData={weatherData.forecast} />
+
                                 <Image
                                     source={weatherData.current.condition.icon}
                                     style={{

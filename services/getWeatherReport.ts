@@ -14,7 +14,7 @@ export async function getWeatherReport(city: string): Promise<WeatherApiResponse
         params: {
             key: API_KEY,
             q: city,
-            days: 7,
+            days: 14,
             aqi: "yes",
             alerts: "no",
         },
