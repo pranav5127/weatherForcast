@@ -1,44 +1,51 @@
-import React, {JSX, useState} from "react"
-import { View, Text, StyleSheet, Switch } from "react-native"
+import React, { JSX, useState } from "react"
+import { View, Text, StyleSheet, Switch, TouchableOpacity } from "react-native"
 import { ThemedView } from "@/components/themed-view"
 import { useTheme } from "@react-navigation/native"
-import {Divider } from "react-native-paper"
-import {useAppContext} from "@/hooks/useAppContext";
+import { Divider } from "react-native-paper"
+import { useAppContext } from "@/hooks/useAppContext"
+import { useRouter } from "expo-router"
 
 export default function Settings(): JSX.Element {
     const { colors } = useTheme()
-    const {temperatureUnit, setTemperatureUnit} = useAppContext()
+    const { temperatureUnit, setTemperatureUnit } = useAppContext()
     const [isFahrenheit, setIsFahrenheit] = useState(temperatureUnit === "F")
+    const router = useRouter()
 
     const toggleTemperatureUnit = () => {
         const newUnit = isFahrenheit ? "C" : "F"
         setIsFahrenheit(!isFahrenheit)
         setTemperatureUnit(newUnit)
-        console.log([temperatureUnit, isFahrenheit])
     }
-
 
     return (
         <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
             <Text style={[styles.heading, { color: colors.text }]}>Settings</Text>
 
             <View style={styles.section}>
-                <Text style={[styles.label, { color: colors.text }]}>Temperature Unit</Text>
-                <View style={styles.switchContainer}>
-                    <Text style={[styles.unitLabel, { color: colors.text }]}>°C</Text>
-                    <Switch
-                        value={isFahrenheit}
-                        onValueChange={toggleTemperatureUnit}
-                        trackColor={{ false: "#ccc", true: "#81b0ff" }}
-                        thumbColor={isFahrenheit ? "#007AFF" : "#f4f3f4"}
-                    />
-                    <Text style={[styles.unitLabel, { color: colors.text }]}>°F</Text>
+                <View style={styles.row}>
+                    <Text style={[styles.label, { color: colors.text }]}>Temperature Unit</Text>
+                    <View style={styles.switchContainer}>
+                        <Text style={[styles.unitLabel, { color: colors.text }]}>°C</Text>
+                        <Switch
+                            value={isFahrenheit}
+                            onValueChange={toggleTemperatureUnit}
+                            trackColor={{ false: "#ccc", true: "#81b0ff" }}
+                            thumbColor={isFahrenheit ? "#007AFF" : "#f4f3f4"}
+                        />
+                        <Text style={[styles.unitLabel, { color: colors.text }]}>°F</Text>
+                    </View>
                 </View>
             </View>
 
             <Divider style={{ marginVertical: 16, backgroundColor: colors.border }} />
 
-
+            <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.primary }]}
+                onPress={() => router.push("/screens/search")}
+            >
+                <Text style={styles.buttonText}>Change Location</Text>
+            </TouchableOpacity>
         </ThemedView>
     )
 }
@@ -56,9 +63,13 @@ const styles = StyleSheet.create({
     section: {
         marginBottom: 20,
     },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
     label: {
         fontSize: 18,
-        marginBottom: 8,
         fontWeight: "600",
     },
     switchContainer: {
@@ -70,22 +81,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "500",
     },
-    locationItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingVertical: 12,
-        paddingHorizontal: 16,
+    button: {
+        paddingVertical: 14,
         borderRadius: 10,
-        marginVertical: 6,
+        alignItems: "center",
+        justifyContent: "center",
     },
-    locationText: {
+    buttonText: {
+        color: "#fff",
         fontSize: 16,
-    },
-    emptyText: {
-        textAlign: "center",
-        marginTop: 12,
-        fontSize: 16,
-        opacity: 0.6,
+        fontWeight: "600",
     },
 })
