@@ -3,7 +3,7 @@ import { API_KEY } from "@/constants/api"
 import { BASE_URL } from "@/constants/urls"
 import { WeatherApiResponse } from "@/services/models/weather-data"
 
-export async function getWeatherReport(query: string): Promise<WeatherApiResponse> {
+export async function getWeatherReport(city: string): Promise<WeatherApiResponse> {
     if (!API_KEY) {
         throw new Error("API_KEY is missing. Please set it in your environment variables.")
     }
@@ -13,7 +13,7 @@ export async function getWeatherReport(query: string): Promise<WeatherApiRespons
         url: `${BASE_URL}/forecast.json`,
         params: {
             key: API_KEY,
-            q: query,
+            q: city,
             days: 14,
             aqi: "yes",
             alerts: "no",

@@ -19,8 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.pranav5127.weatherForcast"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -40,18 +39,11 @@
           }
         }
       ],
-      "expo-font",
-      "expo-secure-store"
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "36cdcc6f-4c7c-4421-a45e-5bb60699be62"
-      }
     }
   }
 }

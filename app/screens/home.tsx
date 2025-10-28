@@ -1,4 +1,5 @@
 import { StyleSheet, ImageBackground, View, Text, ScrollView } from "react-native"
+import { Image } from "expo-image"
 import React, { JSX, useEffect, useState } from "react"
 import { ThemedView } from "@/components/themed-view"
 import TopBar from "@/components/top-bar"
@@ -20,55 +21,58 @@ import Forecast from "@/components/forecast"
 import WeeklyForecast from "@/components/weeklyForecast"
 
 function Weather(): JSX.Element | null {
-    const [fontsLoaded] = useFonts({ Inter_100Thin, Inter_200ExtraLight })
+    const [fontsLoaded] = useFonts({
+        Inter_100Thin,
+        Inter_200ExtraLight,
+    })
     const router: Router = useRouter()
     const { colors } = useTheme()
-    const { selectedLocation, temperatureUnit, currentLocation, errorMsg } = useAppContext()
+    const { selectedLocation, temperatureUnit } = useAppContext()
     const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
 
-    const fetchWeather = async () => {
-        try {
-            setLoading(true)
-            if (selectedLocation) {
+    useEffect(() => {
+        if (!selectedLocation) {
+            setWeatherData(null)
+            return
+        }
+
+        const fetchWeatherData = async () => {
+            try {
+                setLoading(true)
                 const data = await getWeatherReport(selectedLocation.name)
                 setWeatherData(data)
-            } else if (currentLocation) {
-                const coords = `${currentLocation.coords.latitude},${currentLocation.coords.longitude}`
-                const data = await getWeatherReport(coords)
-                setWeatherData(data)
-            } else {
-                setWeatherData(null)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
             }
-        } catch (err) {
-            console.error("Error fetching weather:", err)
-        } finally {
-            setLoading(false)
         }
-    }
 
-    useEffect(() => {
-        fetchWeather()
-    }, [selectedLocation, currentLocation])
+        fetchWeatherData()
+    }, [selectedLocation])
 
     if (!fontsLoaded) return null
 
     const getBackgroundImage = () => {
         if (!weatherData) return sunny
+
         const code = weatherData.current.condition.code
         const isDay = weatherData.current.is_day === 1
         const mappedImage = weatherBackgroundMap[code]
+
         if (mappedImage) {
             if (!isDay && (code === 1000 || code === 1003)) return stars
             return mappedImage
         }
+
         return isDay ? sun : stars
     }
 
     const backgroundImage = getBackgroundImage()
+
     const formatTemperature = (c: number, f: number) =>
         temperatureUnit === "C" ? `${c.toFixed(1)} °C` : `${f.toFixed(1)} °F`
-
     return (
         <ThemedView style={styles.container}>
             <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
@@ -76,22 +80,13 @@ function Weather(): JSX.Element | null {
                     <TopBar
                         onMenuPress={() => router.push("/screens/settings")}
                         onLocationPress={() => router.push("/screens/search")}
-                        onRefreshPress={fetchWeather}
-                        location={
-                            selectedLocation?.name ??
-                            weatherData?.location.name ??
-                            "Current Location"
-                        }
+                        location={selectedLocation?.name}
                     />
 
                     {loading ? (
                         <View style={styles.loadingContainer}>
                             <ActivityIndicator animating size="large" color={colors.primary} />
                             <Text style={[styles.loadingText, { color: colors.text }]}>Loading...</Text>
-                        </View>
-                    ) : errorMsg ? (
-                        <View style={styles.loadingContainer}>
-                            <Text style={[styles.loadingText, { color: colors.text }]}>{errorMsg}</Text>
                         </View>
                     ) : weatherData ? (
                         <>
@@ -105,10 +100,13 @@ function Weather(): JSX.Element | null {
                                         weatherData.current.feelslike_f
                                     )}`}
                                 </Text>
+
                                 <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
                                 <Forecast hourlyData={weatherData.forecast.forecastday[0].hour} />
                                 <WeeklyForecast weeklyData={weatherData.forecast} />
+
+
                             </View>
 
                             <ScrollView
@@ -153,7 +151,7 @@ function Weather(): JSX.Element | null {
                     ) : (
                         <View style={styles.loadingContainer}>
                             <Text style={[styles.loadingText, { color: colors.text }]}>
-                                Allow location or search for a city.
+                                Select a location to see weather.
                             </Text>
                         </View>
                     )}
@@ -172,7 +170,10 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         backgroundColor: "rgba(0,0,0,0.3)",
     },
-    tempContainer: { position: "absolute", top: 100 },
+    tempContainer: {
+        position: "absolute",
+        top: 100,
+    },
     temperatureText: {
         color: "#fff",
         fontSize: 80,
@@ -186,7 +187,19 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         fontFamily: "Inter_200ExtraLight",
     },
-    infoCards: { position: "absolute", bottom: 0, width: "100%", paddingVertical: 20 },
-    loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-    loadingText: { marginTop: 8, fontSize: 16 },
+    infoCards: {
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        paddingVertical: 20,
+    },
+    loadingContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    loadingText: {
+        marginTop: 8,
+        fontSize: 16,
+    },
 })
