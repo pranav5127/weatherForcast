@@ -3,7 +3,7 @@ import {Stack} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import 'react-native-reanimated';
 import {useColorScheme} from '@/hooks/use-color-scheme';
-import {LocationProvider} from "@/context/LocationContext";
+import {LocationProvider} from "@/context/AppContext";
 
 export const unstable_settings = {
     anchor: 'screens',

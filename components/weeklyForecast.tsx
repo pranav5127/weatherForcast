@@ -1,12 +1,14 @@
 import React, { JSX } from "react"
 import { View, Text, FlatList, StyleSheet, Image } from "react-native"
 import type { ForecastData } from "@/services/models/weather-data"
+import { useAppContext } from "@/hooks/useAppContext"
 
 interface WeeklyForecastProps {
     weeklyData?: ForecastData
 }
 
 export default function WeeklyForecast({ weeklyData }: WeeklyForecastProps): JSX.Element {
+    const { temperatureUnit } = useAppContext()
     const days = weeklyData?.forecastday ?? []
 
     if (days.length === 0) {
@@ -21,28 +23,40 @@ export default function WeeklyForecast({ weeklyData }: WeeklyForecastProps): JSX
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.listContent}
-                renderItem={({ item, index }) => (
-                    <View
-                        style={[
-                            styles.item,
-                            index === 0 && styles.firstItem,
-                            index === days.slice(0, 14).length - 1 && styles.lastItem,
-                        ]}
-                    >
-                        <Text style={styles.date}>{item.date}</Text>
-                        <Image
-                            source={{
-                                uri: item.day.condition.icon.startsWith("http")
-                                    ? item.day.condition.icon
-                                    : "https:" + item.day.condition.icon,
-                            }}
-                            style={styles.icon}
-                        />
-                        <Text style={styles.temp}>
-                            {Math.round(item.day.mintemp_c)}° / {Math.round(item.day.maxtemp_c)}°C
-                        </Text>
-                    </View>
-                )}
+                renderItem={({ item, index }) => {
+                    const minTemp =
+                        temperatureUnit === "C"
+                            ? Math.round(item.day.mintemp_c)
+                            : Math.round(item.day.mintemp_f)
+                    const maxTemp =
+                        temperatureUnit === "C"
+                            ? Math.round(item.day.maxtemp_c)
+                            : Math.round(item.day.maxtemp_f)
+                    const unit = temperatureUnit === "C" ? "°C" : "°F"
+
+                    return (
+                        <View
+                            style={[
+                                styles.item,
+                                index === 0 && styles.firstItem,
+                                index === days.slice(0, 14).length - 1 && styles.lastItem,
+                            ]}
+                        >
+                            <Text style={styles.date}>{item.date}</Text>
+                            <Image
+                                source={{
+                                    uri: item.day.condition.icon.startsWith("http")
+                                        ? item.day.condition.icon
+                                        : "https:" + item.day.condition.icon,
+                                }}
+                                style={styles.icon}
+                            />
+                            <Text style={styles.temp}>
+                                {minTemp}° / {maxTemp}{unit}
+                            </Text>
+                        </View>
+                    )
+                }}
             />
         </View>
     )
@@ -51,7 +65,7 @@ export default function WeeklyForecast({ weeklyData }: WeeklyForecastProps): JSX
 const styles = StyleSheet.create({
     container: {
         marginTop: 0,
-        paddingVertical: 10
+        paddingVertical: 10,
     },
     listContent: {
         paddingHorizontal: 16,

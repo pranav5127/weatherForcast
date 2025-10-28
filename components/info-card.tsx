@@ -44,6 +44,7 @@ const sharedCard = {
 const styles = StyleSheet.create({
     card: {
         ...sharedCard,
+        marginBottom: 36
     },
     title: {
         color: "#CCC",

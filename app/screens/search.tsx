@@ -5,7 +5,7 @@ import {useTheme} from "@react-navigation/native"
 import useDebounce from "@/hooks/useDebounce"
 import {LocationSearchResponse, LocationSearchResult} from "@/services/models/cities"
 import {getCities} from "@/services/getCities"
-import {useLocation} from "@/hooks/useLocation";
+import {useAppContext} from "@/hooks/useAppContext";
 import {useRouter} from "expo-router";
 
 function Search(): JSX.Element {
@@ -14,7 +14,7 @@ function Search(): JSX.Element {
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
     const [cities, setCities] = useState<LocationSearchResponse | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-    const {selectedLocation, setSelectedLocation} = useLocation()
+    const {selectedLocation, setSelectedLocation} = useAppContext()
     const router = useRouter()
 
     useEffect(() => {

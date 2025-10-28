@@ -1,20 +1,25 @@
 import {createContext, ReactNode, useState} from "react"
 import {LocationSearchResult} from "@/services/models/cities";
 
-type LocationContextType = {
+type TemperatureUnit = "C" | "F"
+
+type AppContextType = {
     selectedLocation: LocationSearchResult | null
     setSelectedLocation: (location: LocationSearchResult | null) => void
+    temperatureUnit: TemperatureUnit
+    setTemperatureUnit: (unit: TemperatureUnit) => void
 }
 
-export const LocationContext = createContext<LocationContextType | undefined>(undefined)
+export const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function LocationProvider({children}: { children: ReactNode }) {
     const [selectedLocation, setSelectedLocation] = useState<LocationSearchResult | null>(null)
+    const [temperatureUnit, setTemperatureUnit] = useState<TemperatureUnit>("C")
 
     return (
-        <LocationContext.Provider value={{selectedLocation, setSelectedLocation}}>
+        <AppContext.Provider value={{selectedLocation, setSelectedLocation, temperatureUnit, setTemperatureUnit}}>
             {children}
-        </ LocationContext.Provider>
+        </ AppContext.Provider>
     )
 }
 

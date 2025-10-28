@@ -1,24 +1,24 @@
-import {StyleSheet, ImageBackground, View, Text, ScrollView} from "react-native"
-import {Image} from "expo-image"
-import React, {JSX, useEffect, useState} from "react"
-import {ThemedView} from "@/components/themed-view"
+import { StyleSheet, ImageBackground, View, Text, ScrollView } from "react-native"
+import { Image } from "expo-image"
+import React, { JSX, useEffect, useState } from "react"
+import { ThemedView } from "@/components/themed-view"
 import TopBar from "@/components/top-bar"
 import InfoCard from "@/components/info-card"
-import {Inter_100Thin, Inter_200ExtraLight} from "@expo-google-fonts/inter"
-import {useFonts} from "expo-font"
-import {useRouter, Router} from "expo-router"
-import {useLocation} from "@/hooks/useLocation"
-import {WeatherApiResponse} from "@/services/models/weather-data"
-import {getWeatherReport} from "@/services/getWeatherReport"
-import {ActivityIndicator} from "react-native-paper"
-import {useTheme} from "@react-navigation/native"
+import { Inter_100Thin, Inter_200ExtraLight } from "@expo-google-fonts/inter"
+import { useFonts } from "expo-font"
+import { useRouter, Router } from "expo-router"
+import { useAppContext } from "@/hooks/useAppContext"
+import { WeatherApiResponse } from "@/services/models/weather-data"
+import { getWeatherReport } from "@/services/getWeatherReport"
+import { ActivityIndicator } from "react-native-paper"
+import { useTheme } from "@react-navigation/native"
 import Ionicons from "@expo/vector-icons/Ionicons"
-import Feather from '@expo/vector-icons/Feather'
-import {AntDesign} from "@expo/vector-icons"
-import {weatherBackgroundMap} from "@/constants/weatherBackgroundMap";
-import {stars, sun, sunny} from "@/assets/weather";
-import Forecast from "@/components/forecast";
-import WeeklyForecast from "@/components/weeklyForecast";
+import Feather from "@expo/vector-icons/Feather"
+import { AntDesign } from "@expo/vector-icons"
+import { weatherBackgroundMap } from "@/constants/weatherBackgroundMap"
+import { stars, sun, sunny } from "@/assets/weather"
+import Forecast from "@/components/forecast"
+import WeeklyForecast from "@/components/weeklyForecast"
 
 function Weather(): JSX.Element | null {
     const [fontsLoaded] = useFonts({
@@ -26,8 +26,8 @@ function Weather(): JSX.Element | null {
         Inter_200ExtraLight,
     })
     const router: Router = useRouter()
-    const {colors} = useTheme()
-    const {selectedLocation} = useLocation()
+    const { colors } = useTheme()
+    const { selectedLocation, temperatureUnit } = useAppContext()
     const [weatherData, setWeatherData] = useState<WeatherApiResponse | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -49,8 +49,7 @@ function Weather(): JSX.Element | null {
             }
         }
 
-        fetchWeatherData().then(() => {
-        })
+        fetchWeatherData()
     }, [selectedLocation])
 
     if (!fontsLoaded) return null
@@ -60,7 +59,6 @@ function Weather(): JSX.Element | null {
 
         const code = weatherData.current.condition.code
         const isDay = weatherData.current.is_day === 1
-
         const mappedImage = weatherBackgroundMap[code]
 
         if (mappedImage) {
@@ -68,11 +66,13 @@ function Weather(): JSX.Element | null {
             return mappedImage
         }
 
-        if (!isDay) return stars
-        return sun
+        return isDay ? sun : stars
     }
 
     const backgroundImage = getBackgroundImage()
+
+    const formatTemperature = (c: number, f: number) =>
+        temperatureUnit === "C" ? `${c.toFixed(1)} °C` : `${f.toFixed(1)} °F`
     return (
         <ThemedView style={styles.container}>
             <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
@@ -85,65 +85,72 @@ function Weather(): JSX.Element | null {
 
                     {loading ? (
                         <View style={styles.loadingContainer}>
-                            <ActivityIndicator animating size="large" color={colors.primary}/>
-                            <Text style={[styles.loadingText, {color: colors.text}]}>Loading...</Text>
+                            <ActivityIndicator animating size="large" color={colors.primary} />
+                            <Text style={[styles.loadingText, { color: colors.text }]}>Loading...</Text>
                         </View>
                     ) : weatherData ? (
                         <>
                             <View style={styles.tempContainer}>
-                                <Text style={styles.temperatureText}>{`${weatherData.current.temp_c} °C`}</Text>
-                                <Text style={styles.text}>{`Feels like ${weatherData.current.feelslike_c} °C`}</Text>
+                                <Text style={styles.temperatureText}>
+                                    {formatTemperature(weatherData.current.temp_c, weatherData.current.temp_f)}
+                                </Text>
+                                <Text style={styles.text}>
+                                    {`Feels like ${formatTemperature(
+                                        weatherData.current.feelslike_c,
+                                        weatherData.current.feelslike_f
+                                    )}`}
+                                </Text>
+
                                 <Text style={styles.text}>{weatherData.current.condition.text}</Text>
 
-                                <Forecast hourlyData={weatherData.forecast.forecastday[0].hour}/>
+                                <Forecast hourlyData={weatherData.forecast.forecastday[0].hour} />
                                 <WeeklyForecast weeklyData={weatherData.forecast} />
 
-                                <Image
-                                    source={weatherData.current.condition.icon}
-                                    style={{
-                                        width: 80,
-                                        height: 100
-                                    }}
-                                />
 
                             </View>
+
                             <ScrollView
                                 horizontal
                                 style={styles.infoCards}
-                                contentContainerStyle={{paddingHorizontal: 20}}
+                                contentContainerStyle={{ paddingHorizontal: 20 }}
                                 showsHorizontalScrollIndicator={false}
                             >
                                 <InfoCard
-                                    title={"Humidity"}
+                                    title="Humidity"
                                     value={weatherData.current.humidity}
-                                    unit={"%"}
-                                    icon={<Ionicons name="water" size={64} color="#45DDFAFF"/>}
+                                    unit="%"
+                                    icon={<Ionicons name="water" size={64} color="#45DDFAFF" />}
                                 />
                                 <InfoCard
-                                    title={"Wind Speed"}
-                                    value={weatherData.current.wind_kph}
-                                    unit={" kph"}
-                                    icon={<Feather name="wind" size={64} color="#ffffff"/>}
+                                    title="Wind Speed"
+                                    value={
+                                        temperatureUnit === "C"
+                                            ? weatherData.current.wind_kph
+                                            : weatherData.current.wind_mph
+                                    }
+                                    unit={
+                                        temperatureUnit === "C"
+                                            ? ` kph Dir: ${weatherData.current.wind_dir}`
+                                            : ` mph Dir: ${weatherData.current.wind_dir}`
+                                    }
+                                    icon={<Feather name="wind" size={64} color="#ffffff" />}
                                 />
                                 <InfoCard
-                                    title={"UV Index"}
+                                    title="UV Index"
                                     value={weatherData.current.uv}
-                                    unit={""}
-                                    icon={<AntDesign name="sun" size={64} color="#f7d511"/>}
+                                    icon={<AntDesign name="sun" size={64} color="#f7d511" />}
                                 />
                                 <InfoCard
-                                    title={"Pressure"}
+                                    title="Pressure"
                                     value={weatherData.current.pressure_mb}
-                                    unit={" mb"}
-                                    icon={<Ionicons name="speedometer-sharp" size={64} color="#ffffff"/>}
+                                    unit=" mb"
+                                    icon={<Ionicons name="speedometer-sharp" size={64} color="#ffffff" />}
                                 />
-
-
                             </ScrollView>
                         </>
                     ) : (
                         <View style={styles.loadingContainer}>
-                            <Text style={[styles.loadingText, {color: colors.text}]}>
+                            <Text style={[styles.loadingText, { color: colors.text }]}>
                                 Select a location to see weather.
                             </Text>
                         </View>
@@ -157,14 +164,8 @@ function Weather(): JSX.Element | null {
 export default Weather
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-    },
+    container: { flex: 1 },
+    background: { flex: 1, width: "100%", height: "100%" },
     overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: "rgba(0,0,0,0.3)",

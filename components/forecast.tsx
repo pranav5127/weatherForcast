@@ -1,12 +1,15 @@
 import React, { JSX } from "react"
 import { FlatList, View, Text, StyleSheet, Image } from "react-native"
 import type { HourlyForecast } from "@/services/models/weather-data"
+import { useAppContext } from "@/hooks/useAppContext"
 
 interface ForecastProps {
     hourlyData?: HourlyForecast[]
 }
 
 export default function Forecast({ hourlyData }: ForecastProps): JSX.Element {
+    const { temperatureUnit } = useAppContext()
+
     if (!hourlyData || hourlyData.length === 0) {
         return <Text style={styles.empty}>No hourly data</Text>
     }
@@ -22,26 +25,32 @@ export default function Forecast({ hourlyData }: ForecastProps): JSX.Element {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.listContent}
-                renderItem={({ item, index }) => (
-                    <View
-                        style={[
-                            styles.item,
-                            index === 0 && styles.firstItem,
-                            index === upcomingHours.length - 1 && styles.lastItem,
-                        ]}
-                    >
-                        <Text style={styles.time}>{item.time.split(" ")[1]}</Text>
-                        <Image
-                            source={{
-                                uri: item.condition.icon.startsWith("http")
-                                    ? item.condition.icon
-                                    : "https:" + item.condition.icon,
-                            }}
-                            style={styles.icon}
-                        />
-                        <Text style={styles.temp}>{item.temp_c.toFixed(1)}°C</Text>
-                    </View>
-                )}
+                renderItem={({ item, index }) => {
+                    const temperature =
+                        temperatureUnit === "C" ? item.temp_c.toFixed(1) : item.temp_f.toFixed(1)
+                    const unitSymbol = temperatureUnit === "C" ? "°C" : "°F"
+
+                    return (
+                        <View
+                            style={[
+                                styles.item,
+                                index === 0 && styles.firstItem,
+                                index === upcomingHours.length - 1 && styles.lastItem,
+                            ]}
+                        >
+                            <Text style={styles.time}>{item.time.split(" ")[1]}</Text>
+                            <Image
+                                source={{
+                                    uri: item.condition.icon.startsWith("http")
+                                        ? item.condition.icon
+                                        : "https:" + item.condition.icon,
+                                }}
+                                style={styles.icon}
+                            />
+                            <Text style={styles.temp}>{`${temperature}${unitSymbol}`}</Text>
+                        </View>
+                    )
+                }}
             />
         </View>
     )
@@ -50,7 +59,7 @@ export default function Forecast({ hourlyData }: ForecastProps): JSX.Element {
 const styles = StyleSheet.create({
     container: {
         marginVertical: 0,
-        paddingVertical: 10
+        paddingVertical: 10,
     },
     listContent: {
         paddingHorizontal: 16,
