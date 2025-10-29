@@ -1,22 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.text}>Hello World — Root Route Works ✅</Text>
-        </View>
-    );
+    // Redirect from root to the main home screen inside (tabs)
+    return <Redirect href="(tabs)" />;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#fff",
-    },
-    text: {
-        fontSize: 18,
-        fontWeight: "600",
-    },
-});
