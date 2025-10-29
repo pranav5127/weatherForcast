@@ -42,7 +42,7 @@ function Search(): JSX.Element {
         setSelectedLocation(city)
         setSearchTerm("")
         setCities(null)
-        router.push("/screens/home")
+        router.push("/(tabs)/home")
     }
 
     return (

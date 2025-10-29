@@ -1,5 +1,4 @@
 import { StyleSheet, ImageBackground, View, Text, ScrollView } from "react-native"
-import { Image } from "expo-image"
 import React, { JSX, useEffect, useState } from "react"
 import { ThemedView } from "@/components/themed-view"
 import TopBar from "@/components/top-bar"
@@ -78,8 +77,8 @@ function Weather(): JSX.Element | null {
             <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
                 <View style={styles.overlay}>
                     <TopBar
-                        onMenuPress={() => router.push("/screens/settings")}
-                        onLocationPress={() => router.push("/screens/search")}
+                        onMenuPress={() => router.push("/(tabs)/settings")}
+                        onLocationPress={() => router.push("/(tabs)/search")}
                         location={selectedLocation?.name}
                     />
 
