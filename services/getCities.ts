@@ -1,14 +1,14 @@
 import axios, { AxiosResponse } from "axios"
-// import { API_KEY } from "@/constants/api"
 import { BASE_URL } from "@/constants/urls"
 import { LocationSearchResponse } from "@/services/models/cities"
+import {API_KEY} from "@/constants/api"
 
 export async function getCities(query: string): Promise<LocationSearchResponse> {
     const options = {
         method: "GET",
         url: `${BASE_URL}/search.json`,
         params: {
-            key: process.env.API_KEY,
+            key: API_KEY,
             q: query,
         },
     }

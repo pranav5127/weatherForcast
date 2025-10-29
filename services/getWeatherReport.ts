@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios"
 // import { API_KEY } from "@/constants/api"
 import { BASE_URL } from "@/constants/urls"
 import { WeatherApiResponse } from "@/services/models/weather-data"
+import {API_KEY} from "@/constants/api";
 
 export async function getWeatherReport(city: string): Promise<WeatherApiResponse> {
     if (!process.env.API_KEY) {
@@ -12,7 +13,7 @@ export async function getWeatherReport(city: string): Promise<WeatherApiResponse
         method: "GET",
         url: `${BASE_URL}/forecast.json`,
         params: {
-            key: process.env.API_KEY,
+            key: API_KEY,
             q: city,
             days: 14,
             aqi: "yes",
