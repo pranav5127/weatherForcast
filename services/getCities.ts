@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios"
-import { API_KEY } from "@/constants/api"
+// import { API_KEY } from "@/constants/api"
 import { BASE_URL } from "@/constants/urls"
 import { LocationSearchResponse } from "@/services/models/cities"
 
@@ -8,7 +8,7 @@ export async function getCities(query: string): Promise<LocationSearchResponse> 
         method: "GET",
         url: `${BASE_URL}/search.json`,
         params: {
-            key: API_KEY,
+            key: process.env.API_KEY,
             q: query,
         },
     }
@@ -24,6 +24,4 @@ export async function getCities(query: string): Promise<LocationSearchResponse> 
         throw error
     }
 }
-
-// getCities("Ranchi").then((cities) => console.log(cities))
 

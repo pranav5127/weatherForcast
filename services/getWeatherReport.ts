@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios"
-import { API_KEY } from "@/constants/api"
+// import { API_KEY } from "@/constants/api"
 import { BASE_URL } from "@/constants/urls"
 import { WeatherApiResponse } from "@/services/models/weather-data"
 
 export async function getWeatherReport(city: string): Promise<WeatherApiResponse> {
-    if (!API_KEY) {
+    if (!process.env.API_KEY) {
         throw new Error("API_KEY is missing. Please set it in your environment variables.")
     }
 
@@ -12,7 +12,7 @@ export async function getWeatherReport(city: string): Promise<WeatherApiResponse
         method: "GET",
         url: `${BASE_URL}/forecast.json`,
         params: {
-            key: API_KEY,
+            key: process.env.API_KEY,
             q: city,
             days: 14,
             aqi: "yes",

@@ -5,10 +5,6 @@ import 'react-native-reanimated';
 import {useColorScheme} from '@/hooks/use-color-scheme';
 import {LocationProvider} from "@/context/AppContext";
 
-export const unstable_settings = {
-    anchor: 'screens',
-};
-
 export default function RootLayout() {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
@@ -20,7 +16,7 @@ export default function RootLayout() {
                 <StatusBar style={isDark ? 'light' : 'dark'}/>
                 <Stack>
                     <Stack.Screen
-                        name="screens"
+                        name="(tabs)"
                         options={{
                             headerShown: false,
                         }}
