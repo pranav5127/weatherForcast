@@ -1,50 +1,117 @@
-# Welcome to your Expo app 👋
+# 🌦️ Weather Forecast App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A **cross-platform weather application** built with **React Native (Expo)**, **TypeScript**, and a lightweight **FastAPI backend proxy** for secure weather data fetching.  
+It provides **real-time weather updates**, **hourly and weekly forecasts**, and a clean, dynamic UI that adapts to current conditions.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Features
 
-   ```bash
-   npm install
-   ```
+- 🌍 **City Search with Auto-Suggestions** — search for any city with a debounced API call.  
+- ☀️ **Current Weather** — temperature, condition, and location-based background imagery.  
+- 🕓 **Hourly Forecast** — visual temperature trends throughout the day.  
+- 📅 **14-Day Weekly Forecast** — extended weather data with icons and min/max values.  
+- ⚙️ **Settings Screen** — switch between Celsius and Fahrenheit.  
+- 💾 **Global Context Management** — stores user preferences and location globally.  
+- 🧠 **Custom FastAPI Proxy** — protects your WeatherAPI key and handles API requests.  
+- 🎨 **Responsive UI** — adaptive layout for both Android and iOS using Expo.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 🧩 Tech Stack
 
-In the output, you'll find options to open the app in a
+### Frontend
+- **React Native (Expo Router)**
+- **TypeScript**
+- **Expo Google Fonts**
+- **React Context API**
+- **Axios** for API calls
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Backend
+- **FastAPI** (Python)
+- **HTTPX** for async API requests
+- **CORS middleware**
+- **Deployed on Render / Railway**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+d
 
-When you're ready, run:
+## ⚙️ Setup Instructions
 
+### 1. Clone the Repository
 ```bash
-npm run reset-project
+git clone https://github.com/pranav5127/weatherForcast.git
+cd weatherForcast
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-## Learn more
+### 3. Create an `.env` File
+```bash
+EXPO_PUBLIC_API_URL=http://localhost:5000
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+> The frontend uses this variable to connect to the backend proxy.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 4. Start the FastAPI Backend
+Go into the backend folder and run:
 
-## Join the community
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 5000
+```
 
-Join our community of developers creating universal apps.
+### 5. Start the Expo App
+```bash
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Scan the QR code with the Expo Go app (Android/iOS) or open it in an emulator.
+
+---
+
+## 🔒 API Proxy Setup (FastAPI)
+
+Your backend safely proxies all requests to [WeatherAPI](https://www.weatherapi.com/):
+
+```python
+@app.get("/search.json")
+async def search_city(q: str = Query(...)):
+    async with httpx.AsyncClient() as client:
+        params = {"key": API_KEY, "q": q}
+        res = await client.get(f"{BASE_URL}/search.json", params=params)
+        return res.json()
+```
+
+This prevents exposing the API key in the mobile app.
+
+---
+
+## 📱 Demo
+
+🎥 **Loom Walkthrough:**  
+[https://www.loom.com/share/d7aa7bc630f14b32a59035a595e2c728](https://www.loom.com/share/d7aa7bc630f14b32a59035a595e2c728)
+
+---
+
+## 🧭 Future Improvements
+- Offline caching using **React Query** or local storage  
+- Add animations with **Reanimated**  
+- Push notifications for weather alerts  
+- Unit testing with **Jest**
+
+---
+
+## 💡 Author
+
+**Pranav Kumar**  
+[GitHub](https://github.com/pranav5127) • [LinkedIn](https://linkedin.com/in/pranav5127)
+
+---
+
+> Built with ❤️ using React Native & FastAPI
