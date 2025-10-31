@@ -35,8 +35,6 @@ It provides **real-time weather updates**, **hourly and weekly forecasts**, and 
 
 ---
 
-d
-
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
